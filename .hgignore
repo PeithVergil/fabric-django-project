@@ -1,0 +1,9 @@
+syntax:glob
+
+*.pyc
+
+config/live.conf
+config/local.conf
+
+files/ssh/id_rsa
+files/ssh/id_rsa.pub
