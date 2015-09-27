@@ -14,6 +14,7 @@ fab --config=config/live.conf --roles=live live system.info
 
 from fabric.api import env, task, execute, settings
 
+import python
 import system
 import utils
 
