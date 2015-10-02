@@ -1,5 +1,5 @@
 """
-Automate the setup of the local or live server.
+Tasks for automating the setup and deployment of a Django project.
 
 :Examples:
 
