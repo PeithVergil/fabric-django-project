@@ -11,7 +11,7 @@ def info():
 
     :Example:
     
-    fab --config=config/local.conf --roles=local local system.info
+    fab --config=config/local.conf local system.info
     """
 
     run('uname -a')
@@ -24,11 +24,24 @@ def update():
 
     :Example:
     
-    fab --config=config/local.conf --roles=local local system.update
+    fab --config=config/local.conf local system.update
     """
 
     sudo('apt-get -y update')
     sudo('apt-get -y upgrade')
+
+
+@task
+def autoremove():
+    """
+    Remove unused system packages.
+
+    :Example:
+    
+    fab --config=config/local.conf local system.autoremove
+    """
+
+    sudo('apt-get -y autoremove')
 
 
 @task
@@ -41,7 +54,7 @@ def user_create(username, password):
 
     :Example:
     
-    fab --config=config/local.conf --roles=local local system.user_create:username=hello,password=world
+    fab --config=config/local.conf local system.user_create:username=hello,password=world
     """
 
     result = add_usr(username)
@@ -64,7 +77,7 @@ def user_delete(username):
 
     :Example:
     
-    fab --config=config/local.conf --roles=local local system.user_delete:username=hello
+    fab --config=config/local.conf local system.user_delete:username=hello
     """
 
     sudo('deluser {}'.format(username))
@@ -77,7 +90,7 @@ def user_sshkey():
 
     :Example:
     
-    fab --config=config/local.conf --roles=local local system.user_sshkey
+    fab --config=config/local.conf local system.user_sshkey
     """
 
     require('PUBLIC_SSH_KEY')
