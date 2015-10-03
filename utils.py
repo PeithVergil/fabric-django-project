@@ -2,6 +2,7 @@ import random
 import string
 
 from crypt import crypt
+from hashlib import md5
 from os.path import abspath, dirname, exists, join
 
 
@@ -54,3 +55,7 @@ def hash(password):
     salt = '$6${0}'.format(random_string(8))
     
     return crypt(password, salt)
+
+
+def pghash(username, password):
+    return 'md5' + md5(password + username).hexdigest()
