@@ -26,6 +26,7 @@ env.user, env.password = env.SYSTEM_USER, env.SYSTEM_PASS
 env.python_packages = [
     'Django==1.8.4',
     'django-braces==1.8.0',
+    'ipdb==0.8.1',
     'ipython==3.1.0',
     'psycopg2==2.6',
     'pytz==2015.2',
