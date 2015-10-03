@@ -93,3 +93,23 @@ def config_local(base_directory, conf_directory):
     hba_conf = '{}/pg_hba.conf'.format(base_directory)
 
     files.append(hba_conf, 'host all all 0.0.0.0/0 md5', use_sudo=True)
+
+
+@task
+def user_create(username, password):
+    """
+    Create the new database role/user.
+
+    :Example:
+    
+    fab --config=config/local.conf local postgres.user_create:username=hello,password=world
+    """
+
+    # Hash the password that will be passed to PostgreSQL.
+    password = utils.pghash(username, password)
+
+    command = """
+    psql -c "CREATE ROLE {username} WITH {options} ENCRYPTED PASSWORD '{password}'";
+    """.format(username=username, password=password, options=env.postgres_options)
+
+    sudo(command, user='postgres')

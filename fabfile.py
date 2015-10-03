@@ -31,6 +31,14 @@ env.python_packages = [
     'pytz==2015.2',
 ]
 
+env.postgres_options = ' '.join([
+    'NOCREATEROLE',
+    'NOSUPERUSER',
+    'NOINHERIT',
+    'CREATEDB',
+    'LOGIN',
+])
+
 env.postgres_version = '9.3'
 
 
@@ -99,3 +107,8 @@ def setup_local():
 
     execute('postgres.install')
     execute('postgres.config')
+
+    # Ignore errors if the user already exists.
+    with settings(warn_only=True):
+        # Create a new postgres user.
+        execute('postgres.user_create', env.POSTGRES_USER, env.POSTGRES_PASS)
