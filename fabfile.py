@@ -5,28 +5,33 @@ Tasks for automating the setup and deployment of a Django project.
 
 Execute tasks for the local server.
 
-fab --config=config/local.conf --roles=local local system.info
+fab --config=config/local.conf local system.info
 
 Execute tasks for the live server.
 
-fab --config=config/live.conf --roles=live live system.info
+fab --config=config/live.conf live system.info
 """
 
 from fabric.api import env, task, execute, settings
 
+import postgres
 import python
 import system
 import utils
 
 
-env.roledefs = {
-    'live': [
-        '192.168.10.10',
-    ],
-    'local': [
-        '192.168.10.10',
-    ],
-}
+env.user, env.password = env.SYSTEM_USER, env.SYSTEM_PASS
+
+# Python packages to install.
+env.python_packages = [
+    'Django==1.8.4',
+    'django-braces==1.8.0',
+    'ipython==3.1.0',
+    'psycopg2==2.6',
+    'pytz==2015.2',
+]
+
+env.postgres_version = '9.3'
 
 
 @task
@@ -34,9 +39,11 @@ def live():
     """
     Initialize the "env" values for use in production environment.
     """
-    env.environment = 'live'
+    env.hosts = [
+        '192.168.10.10',
+    ]
     
-    env.user, env.password = env.SYSTEM_USER, env.SYSTEM_PASS
+    env.environment = 'live'
 
 
 @task
@@ -44,9 +51,15 @@ def local():
     """
     Initialize the "env" values for use in local environment.
     """
+    env.hosts = [
+        '192.168.10.10',
+    ]
+    
     env.environment = 'local'
 
-    env.user, env.password = env.SYSTEM_USER, env.SYSTEM_PASS
+    env.python_packages += [
+        'django-debug-toolbar==1.3.0'
+    ]
 
 
 @task
@@ -56,7 +69,7 @@ def setup():
 
     :Example:
     
-    fab --config=config/local.conf --roles=local local setup
+    fab --config=config/local.conf local setup
     """
 
     if env.environment == 'live':
@@ -83,3 +96,6 @@ def setup_local():
     # Upload SSH key if the new system user has been created.
     if new_user:
         execute('system.user_sshkey')
+
+    execute('postgres.install')
+    execute('postgres.config')
